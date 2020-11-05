@@ -1,6 +1,7 @@
 import React,{useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
+
 import * as fillActions from '../store/actions/fillActions';
 import * as fileActions from '../store/actions/fileActions';
 
@@ -9,6 +10,7 @@ import {View, StyleSheet, Text, Button,TextInput, KeyboardAvoidingView, ScrollVi
 
 // import CheckBox from '@react-native-community/checkbox';
 import {CheckBox} from 'react-native-elements';
+import SegmentedControlTab from "react-native-segmented-control-tab";
 
 //try
 import * as fileFunctions from '../functions/fileFunctions';
@@ -16,8 +18,17 @@ import * as dbActions from '../store/actions/dbActions';
 import * as convertFunctions from '../functions/convertFunctions';
 
 
+import StatsPage from '../components/StatsPage';
+import * as Colors from '../constants/Colors';
+
+import CustomHeaderButton from '../components/CustomHeaderButton';
+import {HeaderButtons, Item} from 'react-navigation-header-buttons';
+
 const Main = (props) => {
     
+    const chartWidth = 550;
+    const chartHeight = 350;
+
     const redBlurData = useSelector(state=>state.fill.redBlurData);
     const greenBlurData = useSelector(state=>state.fill.greenBlurData);
     const yellowBlurData = useSelector(state=>state.fill.yellowBlurData);
@@ -34,6 +45,7 @@ const Main = (props) => {
     const scope = useSelector(state=>state.fill.scope);
     const blurValue = useSelector(state=>state.fill.blurValue);
     const [shouldBlurShow, setShouldBlurShow] = useState(false);
+    const [selectedIndex, setSelectedIndex] = useState(2);
 
 
     //switch state
@@ -223,11 +235,46 @@ const Main = (props) => {
       fileFunctions.shareFile(dbData);
     }
     
+    const setTopChart = (chartIndex) => {
+      switch (chartIndex) {
+        case 0:
+          setTopRed(true); setTopYellow(false); setTopGreen(false);
+          break;
+        case 1:
+          setTopGreen(true);setTopRed(false);setTopYellow(false);
+          break;
+        case 2:
+          setTopYellow(true);setTopGreen(false); setTopRed(false);
+        default:
+          break;
+      }
+    }
+
     return(
       <View style={styles.big}>
-        <ScrollView contentContainerStyle={styles.container}>   
-        <ScrollView horizontal contentContainerStyle={styles.container}>             
-            {topYellow && showYellow?   <VictoryChart width={850} height={350} theme={VictoryTheme.material}>    
+        <ScrollView contentContainerStyle={styles.outerContainer}>
+          {/* <View style={{flexDirection:'row', justifyContent: 'space-between', width: '90%', paddingTop: 20}}>
+            <View onTouchStart={()=>{setTopRed(true); setTopYellow(false); setTopGreen(false)}} style={{backgroundColor: 'red', width: '30%', height: 30, borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}><Text>Miasto</Text></View>
+            <View onTouchStart={()=>{setTopGreen(true);setTopRed(false);setTopYellow(false)}} style={{backgroundColor: 'green', width: '30%', height: 30, borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}><Text>Trasa</Text></View>
+            <View onTouchStart={()=>{setTopYellow(true);setTopGreen(false); setTopRed(false)}} style={{backgroundColor: '#c49102', width: '30%', height: 30, borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}><Text>Autostrada</Text></View>
+          </View>    */}
+          {/* <Text style={{fontWeight: 'bold', fontSize: 16, marginTop: 20}}>Histogram zużycia paliwa</Text> */}
+        <View style={styles.navBar}>
+          <SegmentedControlTab
+            values={["Miasto", "Trasa", "Autostrada"]}
+            selectedIndex={selectedIndex}
+            onTabPress={(index)=>{setSelectedIndex(index); setTopChart(index)}}
+            activeTabStyle={{backgroundColor: '#ed2929'}}
+            tabsContainerStyle={{width: '90%', marginTop: 20,borderWidth:1, borderRadius: 6, borderColor: '#ed2929'}}
+            tabStyle={{borderWidth: 0, borderLeftWidth: 1,borderColor: '#ed2929', width: '100%'}}
+            lastTabStyle={{borderLeftWidth: 1}}
+            firstTabStyle={{borderLeftWidth: 0}}
+            tabTextStyle={{color: '#ed2929'}}
+            activeTabTextStyle={{color: 'white'}}
+          />
+        </View>
+        <ScrollView horizontal contentContainerStyle={styles.innerContainer}>             
+            {topYellow && showYellow?   <VictoryChart domainPadding={2} width={chartWidth} height={chartHeight} theme={VictoryTheme.material}>    
               {/* loading via file */}
               {shouldBlurShow && showRed ? <VictoryBar style={{data:{fill: 'red', width:barWidth}}} data={redBlurData} x="litres" y="occurance" /> : null}
               {showRed ?  <VictoryBar style={{data:{fill: '#800000',  width: barWidth}}} data={redData} x="litres" y="occurance" /> : null }
@@ -237,7 +284,7 @@ const Main = (props) => {
               {showYellow ? <VictoryBar style={{data:{fill: '#c49102', width: barWidth}}} data={yellowData} x="litres" y="occurance" />  : null }   
             </VictoryChart> : null}
 
-            {topGreen && showGreen ?   <VictoryChart width={850} height={350} theme={VictoryTheme.material}>   
+            {topGreen && showGreen ?   <VictoryChart domainPadding={2} width={chartWidth} height={chartHeight} theme={VictoryTheme.material}>   
               {/* loading via file */}
               {shouldBlurShow  && showRed ? <VictoryBar style={{data:{fill: 'red', width:barWidth}}} data={redBlurData} x="litres" y="occurance" /> : null}
               {showRed ?  <VictoryBar style={{data:{fill: '#800000',  width: barWidth}}} data={redData} x="litres" y="occurance" /> : null }
@@ -248,7 +295,7 @@ const Main = (props) => {
               {showGreen ? <VictoryBar style={{data:{fill: 'green', width: barWidth}}} data={greenData} x="litres" y="occurance" /> : null }
             </VictoryChart> : null}
 
-            {topRed && showRed ?   <VictoryChart width={850} height={350} theme={VictoryTheme.material}>  
+            {topRed && showRed ?   <VictoryChart domainPadding={2} width={chartWidth} height={chartHeight} theme={VictoryTheme.material}>  
               {/* loading via file */}
               {shouldBlurShow && showGreen ? <VictoryBar style={{data:{fill: '#00ff00', width:barWidth}}} data={greenBlurData} x="litres" y="occurance" /> : null}
               {showGreen ? <VictoryBar style={{data:{fill: 'green', width: barWidth}}} data={greenData} x="litres" y="occurance" /> : null }
@@ -260,13 +307,13 @@ const Main = (props) => {
            
           </ScrollView> 
           {/* <View style={{height: 100, backgroundColor: 'white'}}> */}
-            <VictoryLegend x={Platform.OS === 'android' ? 20 : 15} y={0} height={120}
+            {/* <VictoryLegend x={Platform.OS === 'android' ? 20 : 15} y={0} height={120}
               title="Histogram zużycia paliwa"
               centerTitle
               orientation="vertical"
               itemsPerRow={3}
               gutter={20}
-              style={{ border: { stroke: "black", strokeWidth: 1}, title: {fontSize: 16 }, labels: {fontSize: Platform.OS === 'ios' ? 10 : 11 }}}
+              style={{ border: { stroke: "black", strokeWidth: 1, color: 'red'}, title: {fontSize: 16 }, labels: {fontSize: Platform.OS === 'ios' ? 10 : 11 }}}
               data={[
                 { name: "Średnie zużycie (miasto)", symbol: { fill: "#800000"} },
                 { name: "Średnie zużycie (trasa)", symbol: { fill: "green" } },
@@ -274,19 +321,32 @@ const Main = (props) => {
                 { name: "Średnie zużycie/rozmyte (miasto)", symbol: { fill: "red" } },
                 { name: "Średnie zużycie/rozmyte (trasa)", symbol: { fill: "#00ff00" } },
                 { name: "Średnie zużycie/rozmyte (autostrada)   ", symbol: { fill: "#f9a602" } }
-              ]}/>
-          <Button title="PLOT" onPress={plotAll} />
+              ]}/> */}
+                       
+          {topRed ? <StatsPage 
+                      topChart='Miasto' 
+                      chartColor={Colors.redChartColor} 
+                      chartBlurColor={Colors.redChartBlurColor}/> : 
+                    topGreen ? <StatsPage 
+                    topChart='Trasa'
+                    chartColor={Colors.greenChartColor}
+                    chartBlurColor={Colors.greenChartBlurColor}/> : <StatsPage 
+                    topChart='Autostrada'
+                    chartColor={Colors.yellowChartColor}
+                    chartBlurColor={Colors.yellowChartBlurColor}/>}
+
+          {/* <Button title="PLOT" onPress={plotAll} />
           <Button title="See all fills" onPress={()=>props.navigation.navigate('List')} />
           <Button title="Add to database" onPress={()=>props.navigation.navigate('Add')} />
-          <Button title="Get from database" onPress={()=>{dispatch(dbActions.fetchData())}} />
-          <View style={styles.switchContainer}>
+          <Button title="Get from database" onPress={()=>{dispatch(dbActions.fetchData())}} /> */}
+          {/* <View style={styles.switchContainer}>
             <Switch value={showYellow} onValueChange={(newValue)=>setShowYellow(newValue)} trackColor={{false: 'gray', true: '#f9a602'}} thumbColor='#c49102'/><Text>Yellow Chart</Text>
             <Switch value={showGreen} onValueChange={(newValue)=>setShowGreen(newValue)} trackColor={{false: 'gray', true: '#00ff00'}} thumbColor='green'/><Text>Green Chart</Text>
             <Switch value={showRed} onValueChange={(newValue)=>setShowRed(newValue)} trackColor={{false: 'gray', true: 'red'}} thumbColor='#800000'/><Text>Red Chart</Text>
-          </View>
+          </View> */}
           
           {/* checkboxes are android only */}
-         <View style={styles.switchContainer}>
+         {/* <View style={styles.switchContainer}>
           <CheckBox
             center
             containerStyle={{backgroundColor: 'white', borderWidth: 0}}
@@ -308,7 +368,7 @@ const Main = (props) => {
             checked={topRed}
             onIconPress={()=>{setTopRed(!topRed); setTopYellow(false); setTopGreen(false)}}
             checkedColor='#800000'/>
-          </View>
+          </View> */}
           
           {/* <View style={styles.options}>
             <Text>Scope</Text>
@@ -319,57 +379,77 @@ const Main = (props) => {
             <TextInput style={styles.textInput} keyboardType='number-pad' value={blurValue.toString()} onChangeText={(text)=>dispatch(fillActions.setBlurValue(text))} />
           </KeyboardAvoidingView> */}
     
-          <View style={styles.details}>
+          {/* <View style={styles.details}>
             <Button style={styles.checkButton} title="Load files" onPress={loadDataFromDatabase}/>
             <Button style={styles.checkButton} title="Save files" onPress={Platform.OS === 'android' ? saveChart : shareChart} />
             <Button style={styles.checkButton} title="Share files" onPress={shareChart} />
-          </View>
+          </View> */}
         </ScrollView>
         </View>
     );
 }
 
+Main.navigationOptions = (navData) => {
+  return{
+    headerTitle: 'Histogram zużycia paliwa',
+    headerRight: () => 
+          <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+            <Item title='Add' iconName='add' onPress={()=>{navData.navigation.navigate('Add')}}></Item>
+          </HeaderButtons>
+  }
+}
+
 const styles = StyleSheet.create({
   big:{
-    flex:1
-      },
-  container: {
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
+    flex:1,
+  },
+  outerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  navBar:{
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff'
+  },
+  innerContainer:{
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   switchContainer:{
     marginTop: 20,
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   textInput:{
-      borderBottomColor: 'black',
-      borderBottomWidth: 2,
-      width: '50%',
-      height: 20,
-      margin: 20
-    },
-    options:{
-      flexDirection: 'row',
-      width: '50%',
-      height: 40,
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 10,
-      marginTop: 10,
-    },
-    details:{
-      marginTop: 20,
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      width: '80%',
-      marginBottom: 20
-    },
-    checkButton:{
-      width: 50
-    }
+    borderBottomColor: 'black',
+    borderBottomWidth: 2,
+    width: '50%',
+    height: 20,
+    margin: 20
+  },
+  options:{
+    flexDirection: 'row',
+    width: '50%',
+    height: 40,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  details:{
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '80%',
+    marginBottom: 20
+  },
+  checkButton:{
+    width: 50
+  }
 })
 
 export default Main;

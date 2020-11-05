@@ -23,18 +23,24 @@ const FillList = () => {
                 km={itemData.item.kilometersDriven.toString()} 
                 trackType={itemData.item.trackType} 
                 date={itemData.item.date}
-                comments={itemData.item.comments}
+                comments={itemData.item.comments!=='null' ? itemData.item.comments : 'Brak'}
                 onDelete={()=>{dbFunctions.removeFromDatabase(itemData.item.id).then(()=>{dispatch(dbActions.fetchData());})}}/>)}
             />
         </View>
     );
 }
 
+FillList.navigationOptions = () => {
+    return{
+        headerTitle: 'Wszystkie tankowania'
+    }
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     }
 })
 

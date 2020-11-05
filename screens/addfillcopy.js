@@ -4,15 +4,13 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from 'react-native-picker-select';
 
 import {View,Text,StyleSheet,TextInput,Button, ScrollView, SafeAreaView, TouchableOpacity, Platform, Picker, KeyboardAvoidingView} from 'react-native';
-import MyButton from '../components/MyButton';
 
 import {useDispatch, useSelector} from 'react-redux';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import * as fillActions from '../store/actions/fillActions';
 import * as dbFunctions from '../database/connection';
 import * as dbActions from '../store/actions/dbActions';
 
-import * as validateFunctions from '../functions/validateFunctions';
 
 const AddFill = (props) => {
     
@@ -28,33 +26,17 @@ const AddFill = (props) => {
     const dispatch = useDispatch();
     const date = useSelector(state=>state.fill.fillDate);
 
-
-    const sendForm = () => {
-        dbFunctions.addToDatabase(parseFloat(fillText), parseFloat(cpuFillText), parseInt(kilometersDriven), trackType,fillDate.toString(), comments).
-        then(res=>{console.log(res); dispatch(dbActions.fetchData())}).catch(err=>console.log(err));
-    }
-
     return(
         <View style={styles.wrapper}>
-        <KeyboardAwareScrollView>
         <ScrollView>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : null}>
         <View style={styles.container}>
             <View style={styles.fillView}>
                 <View style={styles.textContainer}>
                     <Text style={styles.inputText}>Zużycie</Text>
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput maxLength={4} 
-                               selection={{start: fillText ? fillText.length : 0, end:fillText ? fillText.length : 0}} 
-                               keyboardType='decimal-pad' 
-                               style={styles.input} 
-                               value={fillText} 
-                               onChangeText={(text)=>{
-                                   let newText = validateFunctions.validateUsage(text);
-                                   setFillText(newText);
-                               }} 
-                               placeholder='0.0L'>                                  
-                    </TextInput>
+                    <TextInput maxLength={4} selection={{start: fillText ? fillText.length : 0, end:fillText ? fillText.length : 0}} keyboardType='decimal-pad' style={styles.input} value={fillText} onChangeText={(text)=>setFillText(text)} placeholder='0.00L'></TextInput>
                     <Text style={{fontSize: 20, margin:0, fontWeight: 'bold'}}>{typeof fillText !== 'undefined' && fillText!=''? 'L/100KM' : null}</Text>
                 </View>
             </View>
@@ -64,17 +46,7 @@ const AddFill = (props) => {
                     <Text style={styles.inputText}>Zużycie wg CPU</Text>
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput maxLength={4} 
-                               selection={{start: cpuFillText ? cpuFillText.length : 0, end:cpuFillText ? cpuFillText.length : 0}} 
-                               keyboardType='decimal-pad' 
-                               style={styles.input} 
-                               value={cpuFillText} 
-                               onChangeText={(text)=>{
-                                let newText = validateFunctions.validateUsage(text);
-                                setCpuFillText(newText);
-                            }}
-                               placeholder='0.0L'>                                  
-                    </TextInput>
+                    <TextInput maxLength={4} selection={{start: cpuFillText ? cpuFillText.length : 0, end:cpuFillText ? cpuFillText.length : 0}} keyboardType='decimal-pad' style={styles.input} value={cpuFillText} onChangeText={(text)=>setCpuFillText(text)} placeholder='0.00L'></TextInput>
                     <Text style={{fontSize: 20, margin:0, fontWeight: 'bold'}}>{typeof cpuFillText !== 'undefined' && cpuFillText!=''? 'L/100KM' : null}</Text>
                 </View>          
             </View>
@@ -84,18 +56,8 @@ const AddFill = (props) => {
                     <Text style={styles.inputText}>Przebieg</Text>
                 </View>
                 <View style={styles.inputContainer}>
-                <TextInput maxLength={8} 
-                           selection={{start: kilometersDriven ? kilometersDriven.length : 0, end:kilometersDriven ? kilometersDriven.length : 0}} 
-                           keyboardType='decimal-pad' 
-                           style={styles.input} 
-                           value={kilometersDriven} 
-                           onChangeText={(text)=>{
-                            let newText = validateFunctions.validateMileage(text);   
-                            setKilometersDriven(newText)
-                           }} 
-                           placeholder='0KM'>                            
-                </TextInput>
-                <Text style={{fontSize: 20, margin:0, fontWeight: 'bold'}}>{typeof kilometersDriven !== 'undefined' && kilometersDriven!=''? 'KM' : null}</Text>
+                <TextInput maxLength={10} selection={{start: kilometersDriven ? kilometersDriven.length : 0, end:kilometersDriven ? kilometersDriven.length : 0}} keyboardType='numeric' style={styles.input} value={kilometersDriven} onChangeText={(text)=>setKilometersDriven(text)} placeholder='0KM'></TextInput>
+                    <Text style={{fontSize: 20, margin:2, fontWeight: 'bold'}}>{typeof kilometersDriven !== 'undefined' && kilometersDriven!=''? 'KM' : null}</Text>
                 </View> 
             
             </View>
@@ -118,11 +80,12 @@ const AddFill = (props) => {
                 </View>  
                 <View style={styles.twoFillView}>            
                 <Text style={{fontWeight: 'bold', textAlign: 'center', marginTop: 10}}>Rodzaj trasy</Text>  
-                    <View style={styles.trackView}>                                    
+                    <View style={styles.trackView}>   
+                                  
                         <RNPickerSelect
                             onValueChange={(value) => { console.log(trackType);setTrackType(value);}}
                             placeholder={{}}
-                            style={{inputIOS: {textAlign: 'center'}, done: {color: 'red'}, chevronActive:{color: 'red'}}}
+                            style={{inputIOS: {textAlign: 'center'}}}
                             items={[
                                 { label: 'City', value: 'm' },
                                 { label: 'Road', value: 't' },
@@ -132,32 +95,21 @@ const AddFill = (props) => {
                     </View>
                 </View>
             </View>
-               
 
-         
+                            
             <View style={styles.commentView}>
                 <Text style={{fontWeight: 'bold', textAlign: 'center', marginVertical: 5}}>Uwagi</Text>
-                <TextInput maxLength={100} 
-                           style={styles.commentStyle} 
-                           value={comments} 
-                           multiline 
-                           onChangeText={(text)=>{
-                               let newText = validateFunctions.validateComments(text)
-                               setComments(newText)
-                           }} 
-                           placeholder="Wpisz uwagi...">
-                </TextInput>              
+                <TextInput maxLength={100} style={styles.commentStyle} value={comments} multiline onChangeText={(text)=>setComments(text)} placeholder="Wpisz uwagi..."></TextInput>
             </View>
-
-                
+            
 
             <View style={styles.button}>
-                {/* <Button title="ADD" onPress={sendForm} style={styles.buttonStyle}/> */}
-                <MyButton title="Dodaj" onClick={sendForm} color={{backgroundColor: '#ed2929'}}></MyButton>
+                <Button title="ADD" onPress={()=>{dbFunctions.addToDatabase(parseFloat(fillText), parseFloat(cpuFillText), parseInt(kilometersDriven), trackType,fillDate.toString(), comments).
+                    then(res=>{console.log(res); dispatch(dbActions.fetchData())}).catch(err=>console.log(err));}}/>
             </View>
         </View>
+        </KeyboardAvoidingView>
         </ScrollView>
-        </KeyboardAwareScrollView>
         </View>
     );
 }
@@ -230,6 +182,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         margin: 10,
         justifyContent: 'center',
+        flex:1,
     },
     input:{
         textAlign: 'right',
@@ -238,9 +191,8 @@ const styles = StyleSheet.create({
         minWidth: 80
     },
     button:{
-        marginVertical: 20,
-        width: '80%',
-    },
+        marginTop: 20,
+    }
 })
 
 

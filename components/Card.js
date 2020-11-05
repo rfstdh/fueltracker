@@ -1,19 +1,21 @@
 import React from 'react';
 import {View,Text,StyleSheet, Button} from 'react-native';
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 
 const Card = (props)=> {
     
     let roadType = '';
     switch (props.trackType) {
         case "a":
-           roadType = 'Highway'
+           roadType = 'Autostrada'
            break; 
         case "t":
-            roadType = 'Track'
+            roadType = 'Trasa'
             break;         
         default:
-            roadType = 'City'
+            roadType = 'Miasto'
             break; 
     }
     
@@ -22,17 +24,17 @@ const Card = (props)=> {
         <View style={styles.cardContainer}>
             <View>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text>Actual usage: <Text style={{fontWeight: 'bold'}}>{props.amount} litres / 100 km</Text></Text>
-                <View style={styles.deleteButton}><Button title="Delete" color="#d11a2a" onPress={props.onDelete}/></View>
+                <Text>Zużycie: <Text style={{fontWeight: 'bold'}}>{props.amount} litrów / 100 km</Text></Text>
+                <View style={styles.deleteButton}><Ionicons name='md-trash' size={22} color='#ed2929' onPress={props.onDelete}></Ionicons></View>
                 </View>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text>CPU usage: <Text style={{fontWeight: 'bold'}}>{props.cpuamount} litres / 100 km</Text></Text>
+                <Text>Zużycie wg CPU: <Text style={{fontWeight: 'bold'}}>{props.cpuamount} litrów / 100 km</Text></Text>
                 </View>
                 <View>
-                    <Text>Since last fill: <Text style={{fontWeight: 'bold'}}>{props.km} KM</Text></Text>
-                    <Text>Track type: {roadType}</Text>
-                    <Text>Date: {props.date}</Text>
-                    <Text>Comments: {props.comments}</Text>
+                    <Text>Przebieg: <Text style={{fontWeight: 'bold'}}>{props.km} KM</Text></Text>
+                    <Text>Rodzaj trasy: <Text style={{fontWeight: 'bold'}}>{roadType}</Text></Text>
+                    <Text>Data: <Text style={{fontWeight: 'bold'}}>{props.date}</Text></Text>
+                    <Text>Uwagi: <Text style={{fontWeight: 'bold'}}>{props.comments}</Text></Text>
                 </View>
             </View>
         </View>
@@ -46,10 +48,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         margin: 20,
         borderRadius: 5,
-        padding: 20
+        padding: 20,
+        minWidth: 330
     },
-    deleteButton:{
-    }
 })
 
 export default Card;
