@@ -16,6 +16,7 @@ import SegmentedControlTab from "react-native-segmented-control-tab";
 import * as fileFunctions from '../functions/fileFunctions';
 import * as dbActions from '../store/actions/dbActions';
 import * as convertFunctions from '../functions/convertFunctions';
+import * as statsFunctions from '../functions/statsFunctions';
 
 
 import StatsPage from '../components/StatsPage';
@@ -23,6 +24,7 @@ import * as Colors from '../constants/Colors';
 
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
+import { calculateAvgs } from '../functions/statsFunctions';
 
 const Main = (props) => {
     
@@ -57,6 +59,9 @@ const Main = (props) => {
     const [topYellow,setTopYellow] = useState(true);
     const [topGreen,setTopGreen] = useState(false);
     const [topRed,setTopRed] = useState(false);
+
+    //different data state
+    const [realData, setRealData] = useState(true);
 
     redData.sort((a,b) => {
       return a.litres > b.litres
@@ -203,8 +208,7 @@ const Main = (props) => {
 
     const loadChart = () => {
       var r,g,y;
-      [r,g,y] = convertFunctions.convertToChartData(dbData);
-      console.log(g);
+      [r,g,y] = convertFunctions.convertToChartData(dbData, realData);
       dispatch(fileActions.addRedFileData(r));
       dispatch(fileActions.addGreenFileData(g));
       dispatch(fileActions.addYellowFileData(y));
@@ -215,7 +219,7 @@ const Main = (props) => {
     useEffect(()=>{
       console.log('chart');
       loadChart();
-    },[dbData])
+    },[dbData, realData])
 
     useEffect(()=>{
       plotAll();
@@ -249,6 +253,19 @@ const Main = (props) => {
           break;
       }
     }
+
+    const switchCharts = () => {
+        setRealData(!realData);
+        loadChart();
+    }
+
+    //calculate avg based on current settings (realData, chartType)
+    var avg,l;
+    [avg,l] = statsFunctions.calculateAvgs(dbData,realData,selectedIndex);
+
+    //calculate most occurent value(mode->dominanta)
+    var modeY,modeR,modeG;
+    [modeY,modeG,modeR] = statsFunctions.calculateMode(yellowBlurData,greenBlurData,redBlurData);
 
     return(
       <View style={styles.big}>
@@ -326,14 +343,29 @@ const Main = (props) => {
           {topRed ? <StatsPage 
                       topChart='Miasto' 
                       chartColor={Colors.redChartColor} 
-                      chartBlurColor={Colors.redChartBlurColor}/> : 
+                      chartBlurColor={Colors.redChartBlurColor}
+                      titleText={realData ? 'dystrybutor' : 'komputer'}
+                      onClick={switchCharts}
+                      avg={avg}
+                      mode={modeR}
+                      length={l}/> : 
                     topGreen ? <StatsPage 
                     topChart='Trasa'
                     chartColor={Colors.greenChartColor}
-                    chartBlurColor={Colors.greenChartBlurColor}/> : <StatsPage 
+                    chartBlurColor={Colors.greenChartBlurColor}
+                    titleText={realData ? 'dystrybutor' : 'komputer'}
+                    onClick={switchCharts}
+                    avg={avg}
+                    mode={modeG}
+                    length={l}/> : <StatsPage 
                     topChart='Autostrada'
                     chartColor={Colors.yellowChartColor}
-                    chartBlurColor={Colors.yellowChartBlurColor}/>}
+                    chartBlurColor={Colors.yellowChartBlurColor}
+                    titleText={realData ? 'dystrybutor' : 'komputer'}
+                    onClick={switchCharts}
+                    avg={avg}
+                    mode={modeY}
+                    length={l}/>}
 
           {/* <Button title="PLOT" onPress={plotAll} />
           <Button title="See all fills" onPress={()=>props.navigation.navigate('List')} />

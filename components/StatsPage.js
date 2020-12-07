@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const StatsPage = (props) => {
@@ -8,7 +8,10 @@ const StatsPage = (props) => {
     return(
         <View style={styles.statistics}>
             <View style={styles.statTitle}>
-                <Text style={{fontWeight: 'bold', fontSize: 17}}>Statystyki i legenda</Text>
+                <Text style={{fontWeight: 'bold', fontSize: 17}}>Statystyki i legenda ({props.titleText})</Text>
+                <TouchableOpacity onPress={props.onClick}>
+                    <FontAwesome name='exchange-alt' size={22} color="#ed2929"></FontAwesome>
+                </TouchableOpacity>
             </View>
             <View style={styles.statRowContainer}>
                 <View style={styles.statRow}>
@@ -24,7 +27,7 @@ const StatsPage = (props) => {
                     <MaterialCommunityIcons name='gas-station' size={48} color={props.chartBlurColor}/>
                     </View>
                     <View style={styles.statInfo}>
-                        <Text style={{fontWeight: 'bold'}}>Średnie zużycie (rozmyte)</Text>
+                        <Text style={{fontWeight: 'bold'}}>Rzeczywiste zużycie</Text>
                     </View>
                 </View>
             </View>
@@ -35,7 +38,7 @@ const StatsPage = (props) => {
                     </View>
                     <View style={styles.statInfo}>
                         <Text style={{fontWeight: 'bold'}}>Średnie spalanie</Text>
-                        <Text>6.44 l/100km</Text>                   
+                        <Text>{props.avg} l/100km</Text>                   
                     </View>
                 </View>
                 <View style={styles.statRow}>
@@ -43,8 +46,8 @@ const StatsPage = (props) => {
                     <MaterialCommunityIcons name='fire' size={48} color="#ff7034"/>
                     </View>
                     <View style={styles.statInfo}>
-                        <Text style={{fontWeight: 'bold'}}>Średnie spalanie (rozmyte)</Text>
-                        <Text>6.44 l/100km</Text> 
+                        <Text style={{fontWeight: 'bold'}}>Moda</Text>
+                        <Text>{props.mode} l/100km</Text> 
                     </View>
                 </View>
             </View>
@@ -64,7 +67,7 @@ const StatsPage = (props) => {
                     </View>
                     <View style={styles.statInfo}>
                         <Text style={{fontWeight: 'bold'}}>Pomiary</Text>
-                        <Text>21</Text>
+                        <Text>{props.length}</Text>
                     </View>
                 </View>
             </View>
@@ -85,7 +88,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     statTitle:{
-        justifyContent: 'center',
+        justifyContent: 'space-around',
+        flexDirection: 'row',
         width: '100%',
         marginVertical: 10,
         alignItems: 'center',
