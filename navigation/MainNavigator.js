@@ -2,14 +2,12 @@ import React from 'react';
 
 
 import {createAppContainer} from 'react-navigation';
-import { createMaterialBottomTabNavigator, createMaet } from 'react-navigation-material-bottom-tabs';
 import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import {createStackNavigator,CardStyleInterpolators} from 'react-navigation-stack';
 
 import AddFill from '../screens/AddFill';
 import FillList from '../screens/FillList';
 import MainScreen from '../screens/Main';
-import LoadFile from '../screens/LoadFile';
 import AboutScreen from '../screens/MenuScreens/AboutScreen';
 import SettingsScreen from '../screens/MenuScreens/SettingsScreen';
 
@@ -134,8 +132,6 @@ const tabNavigator = createMaterialTopTabNavigator(mainScreenConfig,{
     inactiveTintColor: 'black',
     style:{
       backgroundColor: 'white',
-      // borderTopWidth: 1,
-      // borderTopColor: '#ccc',
       elevation: 7,
     },
     indicatorStyle:{
@@ -157,12 +153,5 @@ const tabNavigator = createMaterialTopTabNavigator(mainScreenConfig,{
     allowFontScaling: true,
   }
 })
-
-const testNav = createStackNavigator({
-  Main: tabNavigator,
-  Add: AddFill
-})
-
-const tt = createBottomTabNavigator(mainScreenConfig)
 
 export default createAppContainer(tabNavigator);

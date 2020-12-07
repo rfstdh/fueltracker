@@ -1,14 +1,12 @@
 import React,{useState} from 'react';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from 'react-native-picker-select';
 
-import {View,Text,StyleSheet,TextInput,Button, ScrollView, SafeAreaView, TouchableOpacity, Platform, Picker, KeyboardAvoidingView} from 'react-native';
+import {View,Text,StyleSheet,TextInput,ScrollView} from 'react-native';
 import MyButton from '../components/MyButton';
 
 import {useDispatch, useSelector} from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import * as fillActions from '../store/actions/fillActions';
 import * as dbFunctions from '../database/connection';
 import * as dbActions from '../store/actions/dbActions';
 
@@ -21,12 +19,10 @@ const AddFill = (props) => {
     const [kilometersDriven,setKilometersDriven] = useState();
     const [trackType,setTrackType] = useState('m');
     const [fillDate,setFillDate] = useState();
-    const [showDate,setShowDate] = useState(false);
     const [comments,setComments] = useState();
     const [showPicker,setShowPicker] = useState(false);
     
     const dispatch = useDispatch();
-    const date = useSelector(state=>state.fill.fillDate);
 
 
     const sendForm = () => {
@@ -152,7 +148,6 @@ const AddFill = (props) => {
                 
 
             <View style={styles.button}>
-                {/* <Button title="ADD" onPress={sendForm} style={styles.buttonStyle}/> */}
                 <MyButton title="Dodaj" onClick={sendForm} color={{backgroundColor: '#ed2929'}}></MyButton>
             </View>
         </View>

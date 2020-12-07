@@ -1,6 +1,5 @@
 //validate fuel usage
 export const validateUsage = (value) => {
-    // let regex = /^(\d{1,2}|\d{1,2}\.{1}\d{1})$/;
     let rgx = /\,{1}|\.{2,}|[\.\,]{2,}/
     let newValue = value.replace(rgx,'.')
 

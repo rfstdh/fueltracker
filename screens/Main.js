@@ -5,11 +5,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import * as fillActions from '../store/actions/fillActions';
 import * as fileActions from '../store/actions/fileActions';
 
-import { VictoryBar, VictoryChart, VictoryTheme, VictoryGroup, VictoryLegend} from "victory-native";
-import {View, StyleSheet, Text, Button,TextInput, KeyboardAvoidingView, ScrollView, Platform, Switch} from 'react-native';
+import { VictoryBar, VictoryChart, VictoryTheme} from "victory-native";
+import {View, StyleSheet, ScrollView} from 'react-native';
 
-// import CheckBox from '@react-native-community/checkbox';
-import {CheckBox} from 'react-native-elements';
 import SegmentedControlTab from "react-native-segmented-control-tab";
 
 //try
@@ -24,7 +22,6 @@ import * as Colors from '../constants/Colors';
 
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
-import { calculateAvgs } from '../functions/statsFunctions';
 
 const Main = (props) => {
     
@@ -230,15 +227,7 @@ const Main = (props) => {
       console.log('starting');
       dispatch(dbActions.fetchData())
     },[])
-
-    const saveChart = () => {
-      fileFunctions.saveFile(dbData);
-    }
-
-    const shareChart = () => {
-      fileFunctions.shareFile(dbData);
-    }
-    
+   
     const setTopChart = (chartIndex) => {
       switch (chartIndex) {
         case 0:
@@ -264,18 +253,15 @@ const Main = (props) => {
     [avg,l] = statsFunctions.calculateAvgs(dbData,realData,selectedIndex);
 
     //calculate most occurent value(mode->dominanta)
+    if(yellowBlurData.length>0){
+
     var modeY,modeR,modeG;
     [modeY,modeG,modeR] = statsFunctions.calculateMode(yellowBlurData,greenBlurData,redBlurData);
+    }
 
     return(
       <View style={styles.big}>
         <ScrollView contentContainerStyle={styles.outerContainer}>
-          {/* <View style={{flexDirection:'row', justifyContent: 'space-between', width: '90%', paddingTop: 20}}>
-            <View onTouchStart={()=>{setTopRed(true); setTopYellow(false); setTopGreen(false)}} style={{backgroundColor: 'red', width: '30%', height: 30, borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}><Text>Miasto</Text></View>
-            <View onTouchStart={()=>{setTopGreen(true);setTopRed(false);setTopYellow(false)}} style={{backgroundColor: 'green', width: '30%', height: 30, borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}><Text>Trasa</Text></View>
-            <View onTouchStart={()=>{setTopYellow(true);setTopGreen(false); setTopRed(false)}} style={{backgroundColor: '#c49102', width: '30%', height: 30, borderRadius: 10, justifyContent: 'center', alignItems: 'center'}}><Text>Autostrada</Text></View>
-          </View>    */}
-          {/* <Text style={{fontWeight: 'bold', fontSize: 16, marginTop: 20}}>Histogram zużycia paliwa</Text> */}
         <View style={styles.navBar}>
           <SegmentedControlTab
             values={["Miasto", "Trasa", "Autostrada"]}
@@ -323,22 +309,6 @@ const Main = (props) => {
             </VictoryChart> : null}
            
           </ScrollView> 
-          {/* <View style={{height: 100, backgroundColor: 'white'}}> */}
-            {/* <VictoryLegend x={Platform.OS === 'android' ? 20 : 15} y={0} height={120}
-              title="Histogram zużycia paliwa"
-              centerTitle
-              orientation="vertical"
-              itemsPerRow={3}
-              gutter={20}
-              style={{ border: { stroke: "black", strokeWidth: 1, color: 'red'}, title: {fontSize: 16 }, labels: {fontSize: Platform.OS === 'ios' ? 10 : 11 }}}
-              data={[
-                { name: "Średnie zużycie (miasto)", symbol: { fill: "#800000"} },
-                { name: "Średnie zużycie (trasa)", symbol: { fill: "green" } },
-                { name: "Średnie zużycie (autostrada)", symbol: { fill: "#c49102" } },
-                { name: "Średnie zużycie/rozmyte (miasto)", symbol: { fill: "red" } },
-                { name: "Średnie zużycie/rozmyte (trasa)", symbol: { fill: "#00ff00" } },
-                { name: "Średnie zużycie/rozmyte (autostrada)   ", symbol: { fill: "#f9a602" } }
-              ]}/> */}
                        
           {topRed ? <StatsPage 
                       topChart='Miasto' 
@@ -366,56 +336,6 @@ const Main = (props) => {
                     avg={avg}
                     mode={modeY}
                     length={l}/>}
-
-          {/* <Button title="PLOT" onPress={plotAll} />
-          <Button title="See all fills" onPress={()=>props.navigation.navigate('List')} />
-          <Button title="Add to database" onPress={()=>props.navigation.navigate('Add')} />
-          <Button title="Get from database" onPress={()=>{dispatch(dbActions.fetchData())}} /> */}
-          {/* <View style={styles.switchContainer}>
-            <Switch value={showYellow} onValueChange={(newValue)=>setShowYellow(newValue)} trackColor={{false: 'gray', true: '#f9a602'}} thumbColor='#c49102'/><Text>Yellow Chart</Text>
-            <Switch value={showGreen} onValueChange={(newValue)=>setShowGreen(newValue)} trackColor={{false: 'gray', true: '#00ff00'}} thumbColor='green'/><Text>Green Chart</Text>
-            <Switch value={showRed} onValueChange={(newValue)=>setShowRed(newValue)} trackColor={{false: 'gray', true: 'red'}} thumbColor='#800000'/><Text>Red Chart</Text>
-          </View> */}
-          
-          {/* checkboxes are android only */}
-         {/* <View style={styles.switchContainer}>
-          <CheckBox
-            center
-            containerStyle={{backgroundColor: 'white', borderWidth: 0}}
-            title='Yellow Top'
-            checked={topYellow}
-            onIconPress={()=>{setTopYellow(!topYellow);setTopGreen(false); setTopRed(false)}}
-            checkedColor='#c49102'/>
-                 <CheckBox
-            center
-            containerStyle={{backgroundColor: 'white', borderWidth: 0}}
-            title='Green Top'
-            checked={topGreen}
-            onIconPress={()=>{setTopGreen(!topGreen);setTopRed(false);setTopYellow(false)}}
-            checkedColor='green'/>
-                 <CheckBox
-            center
-            containerStyle={{backgroundColor: 'white', borderWidth: 0}}
-            title='Red Top'
-            checked={topRed}
-            onIconPress={()=>{setTopRed(!topRed); setTopYellow(false); setTopGreen(false)}}
-            checkedColor='#800000'/>
-          </View> */}
-          
-          {/* <View style={styles.options}>
-            <Text>Scope</Text>
-            <TextInput style={styles.textInput} keyboardType='number-pad' value={scope.toString()} onChangeText={(text)=>dispatch(fillActions.setScope(text))}/>
-          </View>
-          <KeyboardAvoidingView style={styles.options} behavior='positon'>
-            <Text>Blur value</Text>
-            <TextInput style={styles.textInput} keyboardType='number-pad' value={blurValue.toString()} onChangeText={(text)=>dispatch(fillActions.setBlurValue(text))} />
-          </KeyboardAvoidingView> */}
-    
-          {/* <View style={styles.details}>
-            <Button style={styles.checkButton} title="Load files" onPress={loadDataFromDatabase}/>
-            <Button style={styles.checkButton} title="Save files" onPress={Platform.OS === 'android' ? saveChart : shareChart} />
-            <Button style={styles.checkButton} title="Share files" onPress={shareChart} />
-          </View> */}
         </ScrollView>
         </View>
     );

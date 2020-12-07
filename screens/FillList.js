@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
-import {View, Text,FlatList, StyleSheet} from 'react-native';
+import {View,FlatList, StyleSheet} from 'react-native';
 import Card from '../components/Card';
 
 import * as dbFunctions from '../database/connection';
@@ -11,7 +11,6 @@ import * as dbActions from '../store/actions/dbActions';
 const FillList = () => {
     
     const fillHistory = useSelector(state=>state.db.fills)
-    // console.log(fillHistory)
     const dispatch = useDispatch();
     return(
         <View style={styles.container}>

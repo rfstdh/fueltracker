@@ -1,19 +1,16 @@
 import React,{useState} from 'react';
-import {View,Text,Stylesheet,Button} from 'react-native';
+import {View,Button} from 'react-native';
 
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
 import * as Permissions from 'expo-permissions';
 
-import {VictoryChart,VictoryGroup, VictoryBar} from 'victory-native';
-import { documentDirectory } from 'expo-file-system';
+import {VictoryChart, VictoryBar} from 'victory-native';
 
 const LoadFile = () => {
     
-    const [data,loadData] = useState();
     const [plotData,setPlotData] = useState([]);
-    const [asset,setAsset] = useState();
 
     const status = Permissions.askAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA);
     const fileFunc = () => {

@@ -51,7 +51,6 @@ export const saveFile = async (saveData) => {
         
         console.log('saving');       
         let fileUri = FileSystem.documentDirectory + "wykres.csv";
-        //console.log(fileUri);
         let csvtoSave = makeCsv(saveData);
         
         await FileSystem.writeAsStringAsync(fileUri, csvtoSave, { encoding: FileSystem.EncodingType.UTF8});
@@ -90,6 +89,5 @@ export const makeCsv = (data) => {
         let line = element.usage + "," + element.cpuUsage + "," + element.kilometersDriven + "," + element.trackType + "," +  element.date + "," + element.comments + '\r';
         allCsv+=line;
     });
-    //console.log(allCsv);
     return allCsv;
 }

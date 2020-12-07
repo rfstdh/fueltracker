@@ -6,9 +6,7 @@ import {useSelector,useDispatch} from 'react-redux';
 import Tile from '../../components/Tile';
 import AwesomeIcons from 'react-native-vector-icons/FontAwesome5';
 
-import * as fileActions from '../../store/actions/fileActions';
 import * as fileFunctions from '../../functions/fileFunctions';
-import * as convertFunctions from '../../functions/convertFunctions';
 import * as dbActions from '../../store/actions/dbActions';
 
 import * as Colors from '../../constants/Colors';
