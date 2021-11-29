@@ -14,19 +14,50 @@ export const openFile = async() => {
     //remove current database and override it with loaded data
     await dbFunctions.dropDatabase();
     await dbFunctions.init();
-    await DocumentPicker.getDocumentAsync()
+    
+    
+    //determine location of chosen file, if its external then copy file, otherwise just read
+    await DocumentPicker.getDocumentAsync({copyToCacheDirectory: false})
     .then(async (resolve)=>{
-        await FileSystem.readAsStringAsync(resolve.uri).then((res)=>{parseData(res); return 0;}).catch(err=>console.log(err))          
+        const fileUri = resolve.uri;
+        if(fileUri.includes('externalstorage')){
+            await FileSystem.readAsStringAsync(fileUri)
+            .then(fileContent=>{
+                parseData(fileContent); 
+                return 0;
+            })
+            .catch(err=>{
+                console.log('Error reading file', err);
+            })
+        }
+        else{
+            const destinationUri = FileSystem.documentDirectory + resolve.name;
+            await FileSystem.copyAsync({from: fileUri, to: destinationUri})
+            .then(async ()=>{
+                await FileSystem.readAsStringAsync(destinationUri)
+                .then(fileContent=>{
+                    parseData(fileContent); 
+                    return 0;
+                })
+                .catch(err=>{
+                    console.log('Error reading file', err);
+                })
+            })
+            .catch(err=>{
+                console.log('Error copying file',err);
+            })     
+        };        
     })
-    .catch(err=>console.log(err))
+    .catch(err=>{
+        console.log('Error opening file',err);
+    })
 
 }
 
 //parsing from CSV to JSON
 export const parseData = (data) => { 
-    //console.log(data);
-    console.log('here');
-    var newArray = [];
+
+    console.log('parsing');
     
     var lines = data.split('\r');
     console.log(lines.length);
@@ -46,10 +77,10 @@ export const parseData = (data) => {
 export const saveFile = async (saveData) => {
     
     //need permissions in order to save a file
-    const { status, permissions } = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
+    const {status} = await MediaLibrary.requestPermissionsAsync();
     if(status==='granted'){
         
-        console.log('saving');       
+        console.log('saving');    
         let fileUri = FileSystem.documentDirectory + "wykres.csv";
         let csvtoSave = makeCsv(saveData);
         
@@ -63,17 +94,16 @@ export const saveFile = async (saveData) => {
     }
 }
 
-//share a file - iOS/ANDROID
+//share a file, allows to save to a chosen location - iOS/ANDROID
 export const shareFile = async (saveData) => {
     
     console.log('sharing');        
-    let fileUri = FileSystem.documentDirectory + "wykres.csv";
+    let fileUri = FileSystem.cacheDirectory + "wykres.csv";
     let csvtoSave = makeCsv(saveData);
     
     //temporary save to phone storage just to have hook on next line
-    await FileSystem.writeAsStringAsync(fileUri, csvtoSave, { encoding: FileSystem.EncodingType.UTF8});
-    
-    await Sharing.shareAsync(fileUri)
+    await FileSystem.writeAsStringAsync(fileUri, csvtoSave, { encoding: FileSystem.EncodingType.UTF8}).then().catch(err=>console.log(err));
+    await Sharing.shareAsync(fileUri).then().catch(err=>console.log(err));
     
     //delete from unknown depth of unseen files
     await FileSystem.deleteAsync(fileUri);

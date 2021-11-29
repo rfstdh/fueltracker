@@ -89,7 +89,7 @@ const mainScreenConfig = {
       screen: rootNavigator,
       navigationOptions: {
         tabBarIcon: (tabInfo) => {
-          return <Ionicons name="ios-stats" size={20} color={tabInfo.tintColor} style={{marginTop: 3}}/>
+          return <Ionicons name="stats-chart" size={20} color={tabInfo.tintColor} style={{marginTop: 3}}/>
         },
         tabBarLabel: 'Wykres',
       }

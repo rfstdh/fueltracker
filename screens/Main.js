@@ -249,15 +249,13 @@ const Main = (props) => {
     }
 
     //calculate avg based on current settings (realData, chartType)
-    var avg,l;
-    [avg,l] = statsFunctions.calculateAvgs(dbData,realData,selectedIndex);
+    var averageRed, averageGreen, averageYellow, redDataLength, greenDataLength, yellowDataLength;
+    [averageRed, averageGreen, averageYellow, redDataLength, greenDataLength, yellowDataLength] = statsFunctions.calculateAvgs(dbData,realData);
 
     //calculate most occurent value(mode->dominanta)
-    if(yellowBlurData.length>0){
-
     var modeY,modeR,modeG;
     [modeY,modeG,modeR] = statsFunctions.calculateMode(yellowBlurData,greenBlurData,redBlurData);
-    }
+    
 
     return(
       <View style={styles.big}>
@@ -316,26 +314,26 @@ const Main = (props) => {
                       chartBlurColor={Colors.redChartBlurColor}
                       titleText={realData ? 'dystrybutor' : 'komputer'}
                       onClick={switchCharts}
-                      avg={avg}
+                      avg={averageRed}
                       mode={modeR}
-                      length={l}/> : 
+                      length={redDataLength}/> : 
                     topGreen ? <StatsPage 
                     topChart='Trasa'
                     chartColor={Colors.greenChartColor}
                     chartBlurColor={Colors.greenChartBlurColor}
                     titleText={realData ? 'dystrybutor' : 'komputer'}
                     onClick={switchCharts}
-                    avg={avg}
+                    avg={averageGreen}
                     mode={modeG}
-                    length={l}/> : <StatsPage 
+                    length={greenDataLength}/> : <StatsPage 
                     topChart='Autostrada'
                     chartColor={Colors.yellowChartColor}
                     chartBlurColor={Colors.yellowChartBlurColor}
                     titleText={realData ? 'dystrybutor' : 'komputer'}
                     onClick={switchCharts}
-                    avg={avg}
+                    avg={averageYellow}
                     mode={modeY}
-                    length={l}/>}
+                    length={yellowDataLength}/>}
         </ScrollView>
         </View>
     );

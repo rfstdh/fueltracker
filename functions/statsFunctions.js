@@ -1,34 +1,41 @@
-export const calculateAvgs = (dbData, isRealData, chartType) => {
+export const calculateAvgs = (dbData, isRealData) => {
     
-    let sum = 0;
-    let avg = 0;
-    let symbol = '';
-    if(chartType===0){symbol='m'}
-    if(chartType===1){symbol='t'}
-    if(chartType===2){symbol='a'}
-    if(isRealData){
-        var filteredData = dbData.filter(item => item.trackType === symbol);           
-        for (let i = 0; i < filteredData.length; i++) {
-            sum+=filteredData[i].usage;               
-        }
-        avg = sum / filteredData.length;
-        return [avg.toFixed(2),filteredData.length];      
+    let sumYellow = 0;
+    let sumGreen = 0;
+    let sumRed = 0;
+    let averageYellow = 0;
+    let averageGreen = 0;
+    let averageRed = 0;
+    
+
+    let redDataLength = dbData.filter(item=>item.trackType == 'm').length;
+    let greenDataLength = dbData.filter(item=>item.trackType == 't').length;
+    let yellowDataLength = dbData.filter(item=>item.trackType == 'a').length;
+    for (let i = 0; i < dbData.length; i++) {
+        switch (dbData[i].trackType) {
+            case 'm':
+                sumRed+= isRealData ? dbData[i].usage : dbData[i].cpuUsage;
+                break;
+            case 't':
+                sumGreen+= isRealData ? dbData[i].usage : dbData[i].cpuUsage;
+                break;
+            case 'a':
+                sumYellow+= isRealData ? dbData[i].usage : dbData[i].cpuUsage;
+            default:
+                break;
+        }                        
     }
-    else{
-        var filteredData = dbData.filter(item => item.trackType === symbol);           
-        for (let i = 0; i < filteredData.length; i++) {
-            sum+=filteredData[i].cpuUsage;               
-        }
-        avg = sum / filteredData.length;
-        return [avg.toFixed(2),filteredData.length];
-    }
+    averageRed = redDataLength != 0 ?  sumRed / redDataLength : 0;
+    averageGreen = greenDataLength != 0 ?  sumGreen / greenDataLength : 0;
+    averageYellow =  yellowDataLength != 0 ? sumYellow / yellowDataLength : 0;
+    return [averageRed.toFixed(2), averageGreen.toFixed(2), averageYellow.toFixed(2),
+    redDataLength, greenDataLength, yellowDataLength];      
 }   
 
 export const calculateMode = (yellow,green,red) => {
     let maxY = yellow[0];
     let maxG = green[0];
     let maxR = red[0];
-    
     for (let i = 0; i < yellow.length; i++) {
         if(yellow[i].occurance>maxY.occurance){
             maxY = yellow[i];
@@ -44,5 +51,7 @@ export const calculateMode = (yellow,green,red) => {
             maxR = red[i];
         }       
     }
-    return [maxY.litres,maxG.litres,maxR.litres];
+    return [maxY ? maxY.litres.toFixed(2) : 0,
+        maxG ? maxG.litres.toFixed(2) : 0,
+        maxR ? maxR.litres.toFixed(2) : 0];
 }
