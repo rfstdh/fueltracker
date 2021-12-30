@@ -66,7 +66,7 @@ export const parseData = (data) => {
         const elements = lines[i].split(',');
         
         if(typeof elements[0]!=='undefined' &&  typeof elements[1]!=='undefined' && i!=0){
-            dbFunctions.addToDatabase(parseFloat(elements[0]), parseFloat(elements[1]), parseInt(elements[2]), elements[3], elements[4],elements[5]); 
+            dbFunctions.addToDatabase(parseFloat(elements[0]), parseFloat(elements[1]), parseFloat(elements[2]), parseInt(elements[3]), elements[4], elements[5],elements[6]); 
         }
     }
     return 0;
@@ -113,10 +113,10 @@ export const shareFile = async (saveData) => {
 export const makeCsv = (data) => {
     var allCsv = '';
     //init line
-    let initLine = "Zużycie,CPU Zużycie,Stan licznika,Rodzaj trasy,Data tankowania,Uwagi\r";
+    let initLine = "Zużycie,CPU Zużycie,Błąd zużycia,Stan licznika,Rodzaj trasy,Data tankowania,Uwagi\r";
     allCsv+=initLine;
     data.forEach(element => {
-        let line = element.usage + "," + element.cpuUsage + "," + element.kilometersDriven + "," + element.trackType + "," +  element.date + "," + element.comments + '\r';
+        let line = element.usage + "," + element.cpuUsage + "," + element.usageError + "," + element.kilometersDriven + "," + element.trackType + "," +  element.date + "," + element.comments + '\r';
         allCsv+=line;
     });
     return allCsv;

@@ -1,8 +1,8 @@
 import React from 'react';
 
 
-import {createAppContainer} from 'react-navigation';
-import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
+import { createAppContainer } from 'react-navigation';
+import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import {createStackNavigator,CardStyleInterpolators} from 'react-navigation-stack';
 
 import AddFill from '../screens/AddFill';
@@ -14,23 +14,30 @@ import SettingsScreen from '../screens/MenuScreens/SettingsScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import CustomHeaderButton from '../components/CustomHeaderButton';
-import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import { Platform } from 'react-native';
 
 const rootNavigator = createStackNavigator({
     Main: {
       screen: MainScreen,
-      navigationOptions: (navData) => {
-        return{
-          headerTitle: 'Histogram zużycia paliwa',
-          headerRight: () => 
-                <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                  <Item title='Add' iconName='add' onPress={()=>{navData.navigation.navigate('Add');}}></Item>
-                </HeaderButtons>,
-          headerTintColor: '#ed2929',
-        }
-      }
+      // navigationOptions: (navData) => {
+      //   return{
+      //     headerTitleAlign: 'center',
+      //     headerRight: () => 
+      //           <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+      //             <Item title='Add' iconName='add' onPress={()=>{navData.navigation.navigate('Add');}}></Item>
+      //           </HeaderButtons>,
+      //     headerLeft: () => 
+      //     <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+      //       <Item title='Add' iconName='add-chart' onPress={()=>{navData.navigation.navigate('Add');}}></Item>
+      //     </HeaderButtons>,
+      //     headerTintColor: '#ed2929',
+      //   }
+      // }
+      // navigationOptions: (navData)=> {
+      //   return {
+      //     headerTitle: () => <DropdownHeader></DropdownHeader>
+      //   }
+      // }
     },
     Add: {
       screen: AddFill,

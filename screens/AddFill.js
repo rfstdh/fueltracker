@@ -26,7 +26,7 @@ const AddFill = (props) => {
 
 
     const sendForm = () => {
-        dbFunctions.addToDatabase(parseFloat(fillText), parseFloat(cpuFillText), parseInt(kilometersDriven), trackType,fillDate.toString(), comments).
+        dbFunctions.addToDatabase(parseFloat(fillText), parseFloat(cpuFillText), parseFloat(cpuFillText) - parseFloat(fillText), parseInt(kilometersDriven), trackType,fillDate.toString(), comments).
         then(res=>{console.log(res); dispatch(dbActions.fetchData())}).catch(err=>console.log(err));
     }
 

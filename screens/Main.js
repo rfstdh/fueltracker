@@ -6,7 +6,7 @@ import * as fillActions from '../store/actions/fillActions';
 import * as fileActions from '../store/actions/fileActions';
 
 import { VictoryBar, VictoryChart, VictoryTheme} from "victory-native";
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 
 import SegmentedControlTab from "react-native-segmented-control-tab";
 
@@ -22,6 +22,8 @@ import * as Colors from '../constants/Colors';
 
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
+import Tile from '../components/Tile';
+import ErrorDistribution from './ErrorDistribution';
 
 const Main = (props) => {
     
@@ -60,6 +62,11 @@ const Main = (props) => {
     //different data state
     const [realData, setRealData] = useState(true);
 
+    //initially all measurements are equally weightened, i.e=1
+    const [weightenedData, setWeightenedData] = useState(false);
+    const [showChartToolbar, setShowChartToolbar] = useState(false);
+    const [chartTitle, setChartTitle] = useState("Histogram zużycia paliwa");
+
     redData.sort((a,b) => {
       return a.litres > b.litres
     })
@@ -77,6 +84,8 @@ const Main = (props) => {
     var value = Math.max(1 - ((x/10)**2 / blurValue**2),0);
     return value;
     }
+
+
 
     //function entanglement, histogram with blur function    
     const funcEntaglement = (middleValue,dataset) => {
@@ -190,10 +199,18 @@ const Main = (props) => {
 
     const plotAll = () => {
       console.log('plotting')
+      console.log(showChartToolbar)
       plotRedFunc();
       plotGreenFunc();
       plotYellowFunc();
       setShouldBlurShow(true);
+      props.navigation.setParams({
+        title: chartTitle,
+        openDropdownMenu: () => {
+          setShowChartToolbar(!showChartToolbar)
+          console.log(showChartToolbar)
+        }
+      });
     }
 
     var barWidth = 3;
@@ -205,7 +222,7 @@ const Main = (props) => {
 
     const loadChart = () => {
       var r,g,y;
-      [r,g,y] = convertFunctions.convertToChartData(dbData, realData);
+      [r,g,y] = convertFunctions.convertToChartData(dbData, realData, weightenedData);
       dispatch(fileActions.addRedFileData(r));
       dispatch(fileActions.addGreenFileData(g));
       dispatch(fileActions.addYellowFileData(y));
@@ -216,11 +233,11 @@ const Main = (props) => {
     useEffect(()=>{
       console.log('chart');
       loadChart();
-    },[dbData, realData])
+    },[dbData, realData, weightenedData])
 
     useEffect(()=>{
       plotAll();
-    },[redData, greenData, yellowData])
+    },[redData, greenData, yellowData, weightenedData, showChartToolbar])
 
     // //starting useEffect
     useEffect(()=>{
@@ -259,6 +276,12 @@ const Main = (props) => {
 
     return(
       <View style={styles.big}>
+        {showChartToolbar ? <ScrollView style={{flex: 1, backgroundColor: 'rgba(100, 100, 100, 0.8)', ...StyleSheet.absoluteFillObject, zIndex: 100}}>
+          <Tile onSelect={() => {setShowChartToolbar(!showChartToolbar);setWeightenedData(false); setChartTitle("Histogram zużycia paliwa")}}><Text>Histogram normalny</Text></Tile>
+          <Tile onSelect={() => {setShowChartToolbar(!showChartToolbar);setWeightenedData(true); setChartTitle("Histogram ważony")}}><Text>Histogram ważony</Text></Tile>
+          <Tile onSelect={() => {setShowChartToolbar(!showChartToolbar);setChartTitle("Rozkład błędów");console.log(props.navigation.navigate('About'))}}><Text>Rozkład błędów</Text></Tile>
+          <Tile><Text>Histogram rozkładu błędów</Text></Tile>
+          </ScrollView> : null }
         <ScrollView contentContainerStyle={styles.outerContainer}>
         <View style={styles.navBar}>
           <SegmentedControlTab
@@ -341,13 +364,29 @@ const Main = (props) => {
 
 Main.navigationOptions = (navData) => {
   return{
-    headerTitle: 'Histogram zużycia paliwa',
+    headerTitle: navData.navigation.getParam("title"),
+    headerTintColor: '#ed2929',
+    headerTitleAlign: 'center',
     headerRight: () => 
           <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
             <Item title='Add' iconName='add' onPress={()=>{navData.navigation.navigate('Add')}}></Item>
-          </HeaderButtons>
+          </HeaderButtons>,
+    headerLeft: () => 
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item title='Add' iconName='add-chart' onPress={navData.navigation.getParam("openDropdownMenu")}></Item>
+        </HeaderButtons>,
   }
 }
+
+// Main.navigationOptions = (navData) => {
+//   return{
+//     headerTitle: () => <DropdownHeader title="Histogram zużycia paliwa"></DropdownHeader>,
+//     headerRight: () => 
+//           <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+//             <Item title='Add' iconName='add' onPress={()=>{navData.navigation.navigate('Add')}}></Item>
+//           </HeaderButtons>
+//   }
+// }
 
 const styles = StyleSheet.create({
   big:{

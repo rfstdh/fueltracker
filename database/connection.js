@@ -13,7 +13,7 @@ export const init = () => {
     const promise = new Promise((resolve,reject) => {
     
         db.transaction((tx) => {
-            tx.executeSql('CREATE TABLE IF NOT EXISTS pomiary (id INTEGER PRIMARY KEY NOT NULL, usage REAL NOT NULL, cpuUsage REAL NOT NULL, kilometersDriven INTEGER NOT NULL, trackType TEXT NOT NULL, date TEXT NOT NULL, comments TEXT);',
+            tx.executeSql('CREATE TABLE IF NOT EXISTS pomiary (id INTEGER PRIMARY KEY NOT NULL, usage REAL NOT NULL, cpuUsage REAL NOT NULL, usageError REAL NOT NULL, kilometersDriven INTEGER NOT NULL, trackType TEXT NOT NULL, date TEXT NOT NULL, comments TEXT);',
             [],
             (_,result)=>{resolve(result);},
             (_,err)=>{reject(err);})
@@ -25,14 +25,14 @@ export const init = () => {
 }
 
 //add new record to the database
-export const addToDatabase = (fillText, cpuFillText, kilometersDriven, trackType,fillDate, comments) => {
+export const addToDatabase = (fillText, cpuFillText, usageError, kilometersDriven, trackType,fillDate, comments) => {
     const db = SQLite.openDatabase('tankowania.db');
     console.log('add')
     const promise = new Promise((resolve,reject) => {
     
         db.transaction((tx) => {
-            tx.executeSql('INSERT INTO pomiary (usage, cpuUsage, kilometersDriven, trackType, date, comments) VALUES (?,?,?,?,?,?);',
-            [fillText, cpuFillText, kilometersDriven, trackType,fillDate, comments],
+            tx.executeSql('INSERT INTO pomiary (usage, cpuUsage, usageError, kilometersDriven, trackType, date, comments) VALUES (?,?,?,?,?,?,?);',
+            [fillText, cpuFillText, usageError, kilometersDriven, trackType,fillDate, comments],
             (_,result)=>{resolve(result);},
             (_,err)=>{reject(err);})
         })
@@ -97,12 +97,18 @@ export const saveDb = async () => {
     //     `${FileSystem.documentDirectory}SQLite/tankowania`
     // )
     // console.log(x)
-    await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'SQLite/tankowania.db').then(res=>console.log(res))
+    // const x = await FileSystem.getInfoAsync(FileSystem.documentDirectory).then(async (res)=>{
+    //     console.log(res)
+    //     console.log(FileSystem.documentDirectory + 'SQLite/tankowania.db')
+    //     const asset = await MediaLibrary.createAssetAsync(FileSystem.documentDirectory + 'tankowania.db').catch(err=>console.log(err));
+    //     await MediaLibrary.createAlbumAsync("BazaDanych", asset).then(res=>console.log(res)).catch(err=>console.log(err));
+    // }
+        
+    // ).catch(err=>console.log(err));
     
 //    await FileSystem.readAsStringAsync(uri).then(res=>console.log(res));
-    //await Sharing.shareAsync(FileSystem.documentDirectory + 'SQLite/tankowania.db')
-    
-    const asset = await MediaLibrary.createAssetAsync(FileSystem.documentDirectory + 'SQLite/tankowania.db');
-    await MediaLibrary.createAlbumAsync("BazaDanych", asset);
+
+    //only this works
+    await Sharing.shareAsync(FileSystem.documentDirectory + 'SQLite/tankowania.db')
 }
 
