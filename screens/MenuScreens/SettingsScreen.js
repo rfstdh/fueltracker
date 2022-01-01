@@ -7,6 +7,7 @@ import Tile from '../../components/Tile';
 import AwesomeIcons from 'react-native-vector-icons/FontAwesome5';
 
 import * as fileFunctions from '../../functions/fileFunctions';
+import * as dbFunctions from '../../database/connection';
 import * as dbActions from '../../store/actions/dbActions';
 
 import * as Colors from '../../constants/Colors';
@@ -21,8 +22,10 @@ const SettingsScreen = () => {
         dispatch(dbActions.fetchData()).then(()=>{}) 
       }
     
-    const saveChart = () => {
-        fileFunctions.saveFile(dbData);
+    const saveChart = async () => {
+        //just for development
+        // await dbFunctions.saveDb().then(res=>console.log(res)).catch(err=>console.log(err))
+        await fileFunctions.saveFile(dbData);
     }
     
     const shareChart = () => {
