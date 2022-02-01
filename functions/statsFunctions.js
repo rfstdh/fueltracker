@@ -1,4 +1,6 @@
-export const calculateAvgs = (dbData, isRealData, isWeightenedData, isErrorAverage) => {
+import * as dateFunctions from '../functions/dateFunctions';
+
+export const calculateAvgs = (dbData, isRealData, isWeightenedData, isErrorAverage, currentSeason) => {
     
     let sumYellow = 0;
     let sumGreen = 0;
@@ -17,6 +19,7 @@ export const calculateAvgs = (dbData, isRealData, isWeightenedData, isErrorAvera
         let occuranceFactor = isWeightenedData ? elementWeight : 1
         switch (dbData[i].trackType) {
             case 'm':
+                if(currentSeason != 0 && !dateFunctions.checkSeason(currentSeason, element.date))continue;
                 redDataLength += occuranceFactor
                 if(isErrorAverage){
                     sumRed+= occuranceFactor * dbData[i].usageError
@@ -27,6 +30,7 @@ export const calculateAvgs = (dbData, isRealData, isWeightenedData, isErrorAvera
                     break;
                 }
             case 't':
+                if(currentSeason != 0 && !dateFunctions.checkSeason(currentSeason, element.date))continue;
                 greenDataLength += occuranceFactor
                 if(isErrorAverage){
                     sumGreen+= occuranceFactor * dbData[i].usageError
@@ -37,6 +41,7 @@ export const calculateAvgs = (dbData, isRealData, isWeightenedData, isErrorAvera
                     break;
                 }
             case 'a':
+                if(currentSeason != 0 && !dateFunctions.checkSeason(currentSeason, element.date))continue;
                 yellowDataLength += occuranceFactor
                 if(isErrorAverage){
                     sumYellow+= occuranceFactor * dbData[i].usageError
@@ -55,9 +60,9 @@ export const calculateAvgs = (dbData, isRealData, isWeightenedData, isErrorAvera
     averageYellow =  yellowDataLength != 0 ? sumYellow / yellowDataLength : 0;
 
     //we now need record count instead of sum of weights
-    redDataLength = dbData.filter(item=>item.trackType === "m").length;
-    greenDataLength = dbData.filter(item=>item.trackType === "t").length;
-    yellowDataLength = dbData.filter(item=>item.trackType === "a").length;
+    redDataLength = dbData.filter(item=>item.trackType === "m" && dateFunctions.checkSeason(currentSeason, item.date)).length;
+    greenDataLength = dbData.filter(item=>item.trackType === "t" && dateFunctions.checkSeason(currentSeason, item.date)).length;
+    yellowDataLength = dbData.filter(item=>item.trackType === "a" && dateFunctions.checkSeason(currentSeason, item.date)).length;
 
     return [averageRed.toFixed(2), averageGreen.toFixed(2), averageYellow.toFixed(2),
     redDataLength, greenDataLength, yellowDataLength];      
@@ -102,7 +107,7 @@ export const calculateErrorMode = (yellowData, greenData, redData) => {
         }       
     }
     //yellow key of max value
-    let yellowMode = [...yellowErrorValues.entries()].reduce((prev, curr ) => curr[1] > prev[1] ? curr : prev)[0]
+    let yellowMode = yellowData.length > 0 ? [...yellowErrorValues.entries()].reduce((prev, curr ) => curr[1] > prev[1] ? curr : prev)[0] : 0
 
     for (let i = 0; i < greenData.length; i++) {
         if(typeof greenErrorValues.get(greenData[i].error) !== "undefined"){
@@ -113,7 +118,7 @@ export const calculateErrorMode = (yellowData, greenData, redData) => {
         }       
     }
     //green key of max value
-    let greenMode = [...greenErrorValues.entries()].reduce((prev, curr ) => curr[1] > prev[1] ? curr : prev)[0]
+    let greenMode = greenData.length > 0 ? [...greenErrorValues.entries()].reduce((prev, curr ) => curr[1] > prev[1] ? curr : prev)[0] : 0
 
     for (let i = 0; i < redData.length; i++) {
         if(typeof redErrorValues.get(redData[i].error) !== "undefined"){
@@ -124,7 +129,7 @@ export const calculateErrorMode = (yellowData, greenData, redData) => {
         }       
     }
     //red key of max value
-    let redMode = [...redErrorValues.entries()].reduce((prev, curr ) => curr[1] > prev[1] ? curr : prev)[0]
+    let redMode = redData.length > 0 ? [...redErrorValues.entries()].reduce((prev, curr ) => curr[1] > prev[1] ? curr : prev)[0] : 0
     return [yellowMode, greenMode, redMode];
 }
 
@@ -142,7 +147,7 @@ export const calculateErrorMedian = (yellowData, greenData, redData) => {
         redMedian = redData[parseInt(redData.length / 2)].error
     }
     else{
-        redMedian = (redData[parseInt(redData.length / 2)].error + redData[parseInt(redData.length / 2) - 1].error) / 2
+        redMedian = redData.length > 0 ? (redData[parseInt(redData.length / 2)].error + redData[parseInt(redData.length / 2) - 1].error) / 2 : 0
     }
 
     greenData.sort((a,b) => {
@@ -153,7 +158,7 @@ export const calculateErrorMedian = (yellowData, greenData, redData) => {
         greenMedian = greenData[parseInt(greenData.length / 2)].error
     }
     else{
-        greenMedian = (greenData[parseInt(greenData.length / 2)].error + greenData[parseInt(greenData.length / 2) - 1].error) / 2
+        greenMedian = greenData.length > 0 ? (greenData[parseInt(greenData.length / 2)].error + greenData[parseInt(greenData.length / 2) - 1].error) / 2 : 0
     }
 
     yellowData.sort((a,b) => {
@@ -164,7 +169,7 @@ export const calculateErrorMedian = (yellowData, greenData, redData) => {
         yellowMedian = yellowData[parseInt(yellowData.length / 2)].error
     }
     else{
-        yellowMedian = (yellowData[parseInt(yellowData.length / 2)].error + yellowData[parseInt(yellowData.length / 2) - 1].error) / 2
+        yellowMedian = yellowData.length > 0 ? (yellowData[parseInt(yellowData.length / 2)].error + yellowData[parseInt(yellowData.length / 2) - 1].error) / 2 : 0
     }
 
     return [yellowMedian, greenMedian, redMedian];

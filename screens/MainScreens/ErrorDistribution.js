@@ -22,6 +22,9 @@ const ErrorDistribution = (props) => {
     const [topGreen,setTopGreen] = useState(false);
     const [topRed,setTopRed] = useState(false);
 
+    //different data state based on year season (0-all seasons, 1 - spring, 2 - summer, 3 - autumn, 4 - winter)
+    const [currentSeason, setCurrentSeason] = useState(0);
+
     const setTopChart = (chartIndex) => {
         switch (chartIndex) {
           case 0:
@@ -38,10 +41,10 @@ const ErrorDistribution = (props) => {
       }
      
     var r,g,y;
-    [r,g,y] = convertFunctions.convertToErrorChartData(dbData);
+    [r,g,y] = convertFunctions.convertToErrorChartData(dbData, currentSeason);
 
     var averageRed, averageGreen, averageYellow, redDataLength, greenDataLength, yellowDataLength;
-    [averageRed, averageGreen, averageYellow, redDataLength, greenDataLength, yellowDataLength] = statsFunctions.calculateAvgs(dbData, false, true, true);
+    [averageRed, averageGreen, averageYellow, redDataLength, greenDataLength, yellowDataLength] = statsFunctions.calculateAvgs(dbData, false, true, true, currentSeason);
 
     var modeY,modeR,modeG;
     [modeY, modeG, modeR] = statsFunctions.calculateErrorMode(y,g,r);
@@ -49,6 +52,28 @@ const ErrorDistribution = (props) => {
     var medianRed, medianGreen, medianYellow;  
     [medianYellow, medianGreen, medianRed] = statsFunctions.calculateErrorMedian(y,g,r);
     
+    const seasonChange = () => {
+      setCurrentSeason((currentSeason + 1) % 5)
+    }
+
+    const getCurrentSeasonName = (season) => {
+      switch (season) {
+        case 0:
+          return "Wszystkie";
+        case 1:
+          return "Wiosna";
+        case 2:
+          return "Lato";
+        case 3:
+          return "Jesień";
+        case 4:
+          return "Zima";
+        default:
+          return "Wszystkie";
+      }
+    }
+
+
     const DOT_SIZE = 4;
     const CHART_WIDTH = 550;
     const CHART_HEIGHT = 350;
@@ -90,6 +115,8 @@ const ErrorDistribution = (props) => {
                 </VictoryChart> : null}
             </ScrollView>
             <ErrorStatsPage 
+              onSeasonChange={seasonChange}
+              seasonText={getCurrentSeasonName(currentSeason)}
               chartType={selectedIndex == 2 ? "Autostrada" : selectedIndex == 1 ? "Trasa" : "Miasto"} 
               chartColor="#ff7034" 
               errorAverage={selectedIndex == 2 ? averageYellow : selectedIndex == 1 ? averageGreen : averageRed} 

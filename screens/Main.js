@@ -12,10 +12,10 @@ const Main = (props) => {
     
   //toolbar and main screen title options
   const [showChartToolbar, setShowChartToolbar] = useState(false);
-  const [chartTitle, setChartTitle] = useState("Histogram zużycia paliwa");
+  const [chartTitle, setChartTitle] = useState("Histogram ważony");
   
   //chart type: HW - weightnened histogram, HN - normal histogram, ED - error distribution, EH - error histogram
-  const [chartType, setChartType] = useState("HN");
+  const [chartType, setChartType] = useState("HW");
   
   updateTitle = () => {
     props.navigation.setParams({

@@ -33,6 +33,7 @@ const Histogram = (props) => {
     const redData = useSelector(state=>state.file.fileRedData);
     const greenData = useSelector(state=>state.file.fileGreenData);
     const yellowData = useSelector(state=>state.file.fileYellowData);
+    const mixedData = useSelector(state=>state.file.fileMixedData);
 
     const dbData = useSelector(state=>state.db.fills);
 
@@ -48,6 +49,7 @@ const Histogram = (props) => {
     const [showYellow, setShowYellow] = useState(true);
     const [showGreen, setShowGreen] = useState(true);
     const [showRed, setShowRed] = useState(true);
+    const [showMixed, setShowMixed] = useState(false);
 
     //checkbox state
     const [topYellow,setTopYellow] = useState(true);
@@ -56,6 +58,9 @@ const Histogram = (props) => {
 
     //different data state
     const [realData, setRealData] = useState(true);
+
+    //different data state based on year season (0-all seasons, 1 - spring, 2 - summer, 3 - autumn, 4 - winter)
+    const [currentSeason, setCurrentSeason] = useState(0);
 
     redData.sort((a,b) => {
       return a.litres > b.litres
@@ -203,11 +208,12 @@ const Histogram = (props) => {
     }
 
     const loadChart = () => {
-      var r,g,y;
-      [r,g,y] = convertFunctions.convertToChartData(dbData, realData, props.weightenedData);
+      var r,g,y, mixed;
+      [r,g,y, mixed] = convertFunctions.convertToChartData(dbData, realData, props.weightenedData, currentSeason);
       dispatch(fileActions.addRedFileData(r));
       dispatch(fileActions.addGreenFileData(g));
       dispatch(fileActions.addYellowFileData(y));
+      dispatch(fileActions.addMixedFileData(mixed));
     }
 
     
@@ -215,11 +221,11 @@ const Histogram = (props) => {
     useEffect(()=>{
       console.log('chart');
       loadChart();
-    },[dbData, realData, props.weightenedData])
+    },[dbData, realData, showMixed, props.weightenedData, currentSeason])
 
     useEffect(()=>{
       plotAll();
-    },[redData, greenData, yellowData, props.weightenedData])
+    },[redData, greenData, yellowData, props.weightenedData, currentSeason])
 
     // //starting useEffect
     useEffect(()=>{
@@ -247,9 +253,36 @@ const Histogram = (props) => {
         loadChart();
     }
 
+    const seasonChange = () => {
+      setCurrentSeason((currentSeason + 1) % 5)
+      loadChart();
+    }
+
+    const changeMixedVisibility = () => {
+      setShowMixed(!showMixed);
+      loadChart();
+    }
+
+    const getCurrentSeasonName = (season) => {
+      switch (season) {
+        case 0:
+          return "Wszystkie";
+        case 1:
+          return "Wiosna";
+        case 2:
+          return "Lato";
+        case 3:
+          return "Jesień";
+        case 4:
+          return "Zima";
+        default:
+          return "Wszystkie";
+      }
+    }
+
     //calculate avg based on current settings (realData, chartType)
     var averageRed, averageGreen, averageYellow, redDataLength, greenDataLength, yellowDataLength;
-    [averageRed, averageGreen, averageYellow, redDataLength, greenDataLength, yellowDataLength] = statsFunctions.calculateAvgs(dbData,realData, props.weightenedData, false);
+    [averageRed, averageGreen, averageYellow, redDataLength, greenDataLength, yellowDataLength] = statsFunctions.calculateAvgs(dbData,realData, props.weightenedData, false, currentSeason);
 
     //calculate most occurent value(mode->dominanta)
     var modeY,modeR,modeG;
@@ -282,17 +315,20 @@ const Histogram = (props) => {
               {showGreen ? <VictoryBar style={{data:{fill: 'green', width: barWidth}}} data={greenData} x="litres" y="occurance" /> : null }
               {shouldBlurShow && showYellow ? <VictoryBar style={{data:{fill: '#f9a602', width:barWidth}}} data={yellowBlurData} x="litres" y="occurance" /> : null}
               {showYellow ? <VictoryBar style={{data:{fill: '#c49102', width: barWidth}}} data={yellowData} x="litres" y="occurance" />  : null }   
+              {/* mixed always visible */}
+              {showMixed ? <VictoryBar style={{data:{fill: 'blue', width: barWidth}}} data={mixedData} x="litres" y="occurance" /> : null}
             </VictoryChart> : null}
 
             {topGreen && showGreen ?   <VictoryChart domainPadding={2} width={chartWidth} height={chartHeight} theme={VictoryTheme.material}>   
               {/* loading via file */}
               {shouldBlurShow  && showRed ? <VictoryBar style={{data:{fill: 'red', width:barWidth}}} data={redBlurData} x="litres" y="occurance" /> : null}
               {showRed ?  <VictoryBar style={{data:{fill: '#800000',  width: barWidth}}} data={redData} x="litres" y="occurance" /> : null }
-
               {shouldBlurShow && showYellow ? <VictoryBar style={{data:{fill: '#f9a602', width:barWidth}}} data={yellowBlurData} x="litres" y="occurance" /> : null}
               {showYellow ? <VictoryBar style={{data:{fill: '#c49102', width: barWidth}}} data={yellowData} x="litres" y="occurance" />  : null }   
               {shouldBlurShow && showGreen ? <VictoryBar style={{data:{fill: '#00ff00', width:barWidth}}} data={greenBlurData} x="litres" y="occurance" /> : null}
               {showGreen ? <VictoryBar style={{data:{fill: 'green', width: barWidth}}} data={greenData} x="litres" y="occurance" /> : null }
+              {/* mixed always visible */}
+              {showMixed ? <VictoryBar style={{data:{fill: 'blue', width: barWidth}}} data={mixedData} x="litres" y="occurance" /> : null}
             </VictoryChart> : null}
 
             {topRed && showRed ?   <VictoryChart domainPadding={2} width={chartWidth} height={chartHeight} theme={VictoryTheme.material}>  
@@ -303,6 +339,8 @@ const Histogram = (props) => {
               {showYellow ? <VictoryBar style={{data:{fill: '#c49102', width: barWidth}}} data={yellowData} x="litres" y="occurance" />  : null }   
               {shouldBlurShow && showRed ? <VictoryBar style={{data:{fill: 'red', width:barWidth}}} data={redBlurData} x="litres" y="occurance" /> : null}
               {showRed ?  <VictoryBar style={{data:{fill: '#800000',  width: barWidth}}} data={redData} x="litres" y="occurance" /> : null }
+              {/* mixed always visible */}
+              {showMixed ? <VictoryBar style={{data:{fill: 'blue', width: barWidth}}} data={mixedData} x="litres" y="occurance" /> : null}
             </VictoryChart> : null}
            
           </ScrollView> 
@@ -313,6 +351,9 @@ const Histogram = (props) => {
                       chartBlurColor={Colors.redChartBlurColor}
                       titleText={realData ? 'dystrybutor' : 'komputer'}
                       onClick={switchCharts}
+                      onMixedClick={changeMixedVisibility}
+                      onSeasonChange={seasonChange}
+                      seasonText={getCurrentSeasonName(currentSeason)}
                       avg={averageRed}
                       mode={modeR}
                       length={redDataLength}/> : 
@@ -322,6 +363,9 @@ const Histogram = (props) => {
                     chartBlurColor={Colors.greenChartBlurColor}
                     titleText={realData ? 'dystrybutor' : 'komputer'}
                     onClick={switchCharts}
+                    onMixedClick={changeMixedVisibility}
+                    onSeasonChange={seasonChange}
+                    seasonText={getCurrentSeasonName(currentSeason)}
                     avg={averageGreen}
                     mode={modeG}
                     length={greenDataLength}/> : <StatsPage 
@@ -330,6 +374,9 @@ const Histogram = (props) => {
                     chartBlurColor={Colors.yellowChartBlurColor}
                     titleText={realData ? 'dystrybutor' : 'komputer'}
                     onClick={switchCharts}
+                    onMixedClick={changeMixedVisibility}
+                    onSeasonChange={seasonChange}
+                    seasonText={getCurrentSeasonName(currentSeason)}
                     avg={averageYellow}
                     mode={modeY}
                     length={yellowDataLength}/>}

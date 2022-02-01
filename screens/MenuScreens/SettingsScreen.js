@@ -24,7 +24,7 @@ const SettingsScreen = () => {
     
     const saveChart = async () => {
         //just for development
-        // await dbFunctions.saveDb().then(res=>console.log(res)).catch(err=>console.log(err))
+        //await dbFunctions.saveDb().then(res=>console.log(res)).catch(err=>console.log(err))
         await fileFunctions.saveFile(dbData);
     }
     

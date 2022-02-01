@@ -10,6 +10,15 @@ const ErrorStatsPage = (props) => {
             <View style={styles.statTitle}>
                 <Text style={{fontWeight: 'bold', fontSize: 17}}>Średni błąd pomiarowy ({props.chartType})</Text>
             </View>
+            <View style={styles.statTitle}>
+                <TouchableOpacity onPress={props.onSeasonChange}>
+                    <FontAwesome name='arrow-left' size={22} color="#ed2929"></FontAwesome>
+                </TouchableOpacity>
+                <Text style={{fontWeight: 'bold', fontSize: 17}}>{props.seasonText}</Text>
+                <TouchableOpacity onPress={props.onSeasonChange}>
+                    <FontAwesome name='arrow-right' size={22} color="#ed2929"></FontAwesome>
+                </TouchableOpacity>
+            </View>
             <View style={styles.statRowContainer}>
                 <View style={{...styles.statRow, width: "40%"}}>
                     <View style={styles.statIcon}>

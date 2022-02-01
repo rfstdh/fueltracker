@@ -12,6 +12,21 @@ const StatsPage = (props) => {
                 <TouchableOpacity onPress={props.onClick}>
                     <FontAwesome name='exchange-alt' size={22} color="#ed2929"></FontAwesome>
                 </TouchableOpacity>
+
+                {/* changing visibility of mixed fills */}
+                <TouchableOpacity onPress={props.onMixedClick}>
+                    <MaterialCommunityIcons name='eye-settings' size={22} color="#ed2929"/>
+                </TouchableOpacity>
+               
+            </View>
+            <View style={styles.statTitle}>
+                <TouchableOpacity onPress={props.onSeasonChange}>
+                    <FontAwesome name='arrow-left' size={22} color="#ed2929"></FontAwesome>
+                </TouchableOpacity>
+                <Text style={{fontWeight: 'bold', fontSize: 17}}>{props.seasonText}</Text>
+                <TouchableOpacity onPress={props.onSeasonChange}>
+                    <FontAwesome name='arrow-right' size={22} color="#ed2929"></FontAwesome>
+                </TouchableOpacity>             
             </View>
             <View style={styles.statRowContainer}>
                 <View style={styles.statRow}>

@@ -2,6 +2,7 @@ export const ADD_FILE_DATA = "ADD_FILE_DATA";
 export const ADD_RED_FILE_DATA = "ADD_RED_FILE_DATA";
 export const ADD_GREEN_FILE_DATA = "ADD_GREEN_FILE_DATA";
 export const ADD_YELLOW_FILE_DATA = "ADD_YELLOW_FILE_DATA";
+export const ADD_MIXED_FILE_DATA = "ADD_MIXED_FILE_DATA";
 
 
 export const addFileData = (fileData) => {
@@ -30,5 +31,12 @@ export const addYellowFileData = (yellowFileData) => {
     return{
         type: ADD_YELLOW_FILE_DATA,
         yellowFileData: yellowFileData
+    }
+}
+
+export const addMixedFileData = (mixedFileData) => {
+    return{
+        type: ADD_MIXED_FILE_DATA,
+        mixedFileData: mixedFileData
     }
 }

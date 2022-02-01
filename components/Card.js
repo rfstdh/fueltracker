@@ -13,9 +13,12 @@ const Card = (props)=> {
            break; 
         case "t":
             roadType = 'Trasa'
+            break;
+        case "m":
+            roadType = 'Miasto'
             break;         
         default:
-            roadType = 'Miasto'
+            roadType = 'Mieszane'
             break; 
     }
     

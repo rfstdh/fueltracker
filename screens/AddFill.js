@@ -2,7 +2,7 @@ import React,{useState} from 'react';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RNPickerSelect from 'react-native-picker-select';
 
-import {View,Text,StyleSheet,TextInput,ScrollView} from 'react-native';
+import {View,Text,StyleSheet,TextInput,ScrollView, Alert} from 'react-native';
 import MyButton from '../components/MyButton';
 
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,10 +24,16 @@ const AddFill = (props) => {
     
     const dispatch = useDispatch();
 
-
     const sendForm = () => {
         dbFunctions.addToDatabase(parseFloat(fillText), parseFloat(cpuFillText), parseFloat(cpuFillText) - parseFloat(fillText), parseInt(kilometersDriven), trackType,fillDate.toString(), comments).
-        then(res=>{console.log(res); dispatch(dbActions.fetchData())}).catch(err=>console.log(err));
+        then(res=>{
+            console.log(res);            
+            dispatch(dbActions.fetchData())
+            Alert.alert("Success","Fill added succesfully!", [{text: "OK", style: 'destructive', onPress: () => {props.navigation.goBack()}}])
+        }).catch(err=>{
+            console.log(err);
+            Alert.alert("Error","Something went wrong!", [{text: "OK", style: 'destructive', onPress: () => {props.navigation.goBack()}}])
+        });
     }
 
     return(
@@ -123,6 +129,7 @@ const AddFill = (props) => {
                                 { label: 'City', value: 'm' },
                                 { label: 'Road', value: 't' },
                                 { label: 'Highway', value: 'a' },
+                                { label: 'Mixed', value: 'x' }
                             ]}
                         />
                     </View>
