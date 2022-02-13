@@ -39,20 +39,19 @@ na wykresie.
 
 There is statistics panel right below the charts which presents detailed statistics about fuel usage on a given track type. Similarly to charts, panel can be managed, ie. track type that is used to calculate statistics can be changed. Panel tells the user about average fuel usage, actual fuel usage, mode, track type and fill type (computer based fills and actual fills) used to calculate results. Switching between computer based and actual results is handled by arrow icon, located in top right corner of the panel. Additionally, there is eye icon nearby, which allows to show or hide mixed track type fills (they are not taken into consideration when calculating statistics anyway) on chart.
 
-
-![Obraz5](https://user-images.githubusercontent.com/43353217/152549331-8ead96b4-2796-4c20-bb19-51370218c7e2.png)
+![o1](https://user-images.githubusercontent.com/43353217/153772314-d5eb71b0-bc3d-4da9-b18b-4a9395defaee.png)
 
 ### Dodawanie pomiarów | Adding fills
 
 :poland:
 
-Dodawanie pomiaru zużycia paliwa odbywa się przy pomocy ikony z plusem zlokalizowanej w prawym górnym rogu nagłówka. Następnie należy wprowadzić dane dotyczące pomiaru. Szczegól nie warto zwrócić uwagę na pole przebieg (jeżeli mamy pomiary, które z jakiegoś powodu uznaliśmy za nieistotne, to i tak warto je wprowadzić, ponieważ pole przebieg jest w późniejszym etapie używane do wyliczania wagi danego pomiaru, tj. odległość od poprzedniego tankowania dzielona przez stałą wartość referencyjną 500 km). Niewprowadzenie takiego pomiaru może skutkować niewłaściwie wyliczoną wagą następnego wprowadzonego pomiaru.
+Dodawanie pomiaru zużycia paliwa odbywa się przy pomocy ikony z plusem zlokalizowanej w prawym górnym rogu nagłówka. Następnie należy wprowadzić dane dotyczące pomiaru. Szczególnie warto zwrócić uwagę na pole przebieg (jeżeli mamy pomiary, które z jakiegoś powodu uznaliśmy za nieistotne, to i tak warto je wprowadzić, ponieważ pole przebieg jest w późniejszym etapie używane do wyliczania wagi danego pomiaru, tj. odległość od poprzedniego tankowania dzielona przez stałą wartość referencyjną 500 km). Niewprowadzenie takiego pomiaru może skutkować niewłaściwie wyliczoną wagą następnego wprowadzonego pomiaru.
 
 :us:
 
 Adding new fill is handled by plus icon located in top right corner of navbar. Next, fill data has to be entered. It is worth noting that mileage field is very crucial for the calculation system to work correctly (if we have any fills that for some reason we think are irrelevant, it is still a good idea to enter them, since they are later used to calculate weight of a given fill, ie distance from previous filling divided by constant reference value of 500 km). Not entering that fill may result in inappropriate weight assigned to the next entered fill.
 
-![Obraz5](https://user-images.githubusercontent.com/43353217/152549331-8ead96b4-2796-4c20-bb19-51370218c7e2.png)
+![o2](https://user-images.githubusercontent.com/43353217/153772603-6f78ea2f-a56e-4d18-bb6f-5dd4bb97f9f3.png)
 
 ## Wczytywanie i zapisywanie danych | Loading and saving data
 
@@ -74,7 +73,7 @@ Application is capable of opening and reading CSV files, but certain criteria mu
 
 In order to load data from CSV file, you need to click the settings tab and press the Import button. File system explorer will open. Files can also be loaded from Google Drive.
 
-![Obraz5](https://user-images.githubusercontent.com/43353217/152549331-8ead96b4-2796-4c20-bb19-51370218c7e2.png)
+![o3](https://user-images.githubusercontent.com/43353217/153772612-24c973b5-1787-48ea-bb6f-d9fe6616e476.png)
 
 ### Zapisywanie danych | Saving data
 
@@ -85,8 +84,6 @@ Dane są automatycznie zapisywane/nadpisywane po każdej operacji w bazie danych
 :us:
 
 After every operation, data is automatically saved/overwritten to the SQLite database located in the device. After relaunching the app, data will be loaded from the latest version of SQLite database file. There is also a possibility of exporting a CSV file that can be saved on device or at Goggle Drive. Unfortunatelly, save location can not be chosen (it is a certain restriction coming from Expo package). To save a file, you need to hit the Export button and app will create a folder named Charts in device's multimedia folder (photos, videos, tones) and save file there. Application also allows sharing a file, to do so you need to hit Share button at the very same Settings tab and choose a sharing medium, ie Messenger, SMS, WhatsApp.
-
-![Obraz5](https://user-images.githubusercontent.com/43353217/152549331-8ead96b4-2796-4c20-bb19-51370218c7e2.png)
 
 # Jak uruchomić aplikację? | How to run app?
 
