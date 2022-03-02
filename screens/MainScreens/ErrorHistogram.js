@@ -75,7 +75,8 @@ const ErrorHistogram = (props) => {
             <DistributionStatsPage 
               onSeasonChange={seasonChange}
               seasonText={getCurrentSeasonName(currentSeason)}
-              chartType={selectedIndex == 2 ? "Autostrada" : selectedIndex == 1 ? "Trasa" : selectedIndex == 0 ? "Miasto" : "Wszystkie"} > 
+              chartType={selectedIndex == 2 ? "Autostrada" : selectedIndex == 1 ? "Trasa" : selectedIndex == 0 ? "Miasto" : "Wszystkie"}
+              data = {selectedIndex == 2 ? yellowErrorData : selectedIndex == 1 ? greenErrorData : selectedIndex == 0 ? redErrorData : allErrorData} > 
             </DistributionStatsPage>
         </ScrollView>
     )
